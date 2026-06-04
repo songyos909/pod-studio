@@ -42,6 +42,9 @@
    | `SUCCESS_URL` | `https://songyos909.github.io/pod-studio/store/success.html` |
    | `CANCEL_URL` | `https://songyos909.github.io/pod-studio/store/` |
    | `WEBHOOK_KEY` | ตั้งรหัสลับอะไรก็ได้ เช่น `mysecret123` (ใช้ขั้นที่ 6) |
+   | `EMAIL_FILES` | (ไม่บังคับ) ใส่ `false` ถ้า**ไม่อยากส่งอีเมล** — ลูกค้าโหลดบนหน้า success อย่างเดียว |
+
+> 📌 ลูกค้าได้ไฟล์ "ทันทีบนหน้าจอ" หลังจ่ายเสมอ (ไม่ต้องเช็กอีเมล) — อีเมลเป็นแค่สำเนาสำรอง เผื่อปิดหน้าไปก่อนโหลด
 
 ## ขั้นที่ 5 — Deploy เป็น Web app
 1. Apps Script → **Deploy → New deployment → ⚙️ → Web app**

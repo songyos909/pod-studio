@@ -38,8 +38,11 @@
             ? '<a class="dl-item" href="' + esc(it.link) + '">⬇️ ' + esc(it.title) + '</a>'
             : '<div class="dl-item">' + esc(it.title) + '</div>';
         }).join("");
-        render('<div class="check">✓</div><h1>ขอบคุณสำหรับการสั่งซื้อ!</h1>' +
-          '<p class="hint">เราส่งไฟล์ไปที่อีเมล ' + esc(o.email || "") + ' แล้ว — หรือดาวน์โหลดได้เลยด้านล่าง</p>' +
+        var note = o.emailed
+          ? 'ดาวน์โหลดไฟล์ของคุณได้เลยด้านล่าง 👇 (ส่งสำเนาไปอีเมล ' + esc(o.email || "") + ' ด้วยแล้ว)'
+          : 'ดาวน์โหลดไฟล์ของคุณได้เลยด้านล่าง 👇 แนะนำให้บันทึกไฟล์ทันที';
+        render('<div class="check">✓</div><h1>ชำระเงินสำเร็จ! ดาวน์โหลดได้เลย</h1>' +
+          '<p class="hint">' + note + '</p>' +
           '<div class="dl-list">' + (links || "<p>ไม่มีไฟล์</p>") + '</div>' +
           '<a class="back" href="./">← กลับไปที่ร้าน</a>');
       } catch (e) {

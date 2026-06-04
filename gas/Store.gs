@@ -32,7 +32,8 @@ function getCfg_() {
     currency: (p.getProperty("CURRENCY") || "thb").toLowerCase(),
     successUrl: p.getProperty("SUCCESS_URL") || "",   // เช่น https://user.github.io/pod-studio/store/success.html
     cancelUrl: p.getProperty("CANCEL_URL") || "",     // เช่น https://user.github.io/pod-studio/store/
-    shopName: p.getProperty("SHOP_NAME") || "Digital Store"
+    shopName: p.getProperty("SHOP_NAME") || "Digital Store",
+    emailFiles: p.getProperty("EMAIL_FILES") !== "false" // "false" = ไม่ส่งอีเมล (ลูกค้าโหลดหน้า success อย่างเดียว)
   };
 }
 
@@ -186,8 +187,9 @@ function deliver_(sessionId) {
     }
   });
 
-  // ส่งอีเมลลูกค้า
-  if (email) {
+  // ส่งอีเมลลูกค้า (สำรอง) — ลูกค้าโหลดได้เลยบนหน้า success อยู่แล้ว
+  // ปิดได้ด้วย Script Property EMAIL_FILES = false
+  if (email && cfg.emailFiles) {
     var body = '<p>ขอบคุณสำหรับการสั่งซื้อจาก ' + esc_(cfg.shopName) + '!</p>' +
       '<p>ดาวน์โหลดไฟล์ของคุณ:</p><ul>' + linksHtml.join("") + '</ul>' +
       '<p>หมายเลขคำสั่งซื้อ: ' + esc_(sessionId) + '</p>';
@@ -204,7 +206,7 @@ function deliver_(sessionId) {
   }
 
   sales.appendRow([new Date(), sessionId, email, itemIds.join(", "), amount, "Y"]);
-  return { ok: true, paid: true, email: email,
+  return { ok: true, paid: true, email: email, emailed: !!(email && cfg.emailFiles),
            items: delivered.map(function (d) { return { title: d.title, link: d.link }; }) };
 }
 
