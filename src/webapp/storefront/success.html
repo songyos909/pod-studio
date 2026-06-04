@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ขอบคุณสำหรับการสั่งซื้อ</title>
+  <link rel="stylesheet" href="/store/static/shop.css" />
+</head>
+<body>
+  <main class="wrap success-wrap">
+    <div id="box" class="success-box">
+      <div class="spinner"></div>
+      <h1>กำลังยืนยันการชำระเงิน...</h1>
+    </div>
+  </main>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const sid = params.get("session_id");
+    const box = document.getElementById("box");
+    const esc = (s) => (s || "").replace(/[&<>"]/g, (c) => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
+
+    async function load() {
+      if (!sid) { box.innerHTML = "<h1>ไม่พบคำสั่งซื้อ</h1>"; return; }
+      try {
+        const r = await fetch("/store/api/order?session_id=" + encodeURIComponent(sid));
+        const o = await r.json();
+        if (!r.ok) throw new Error(o.error || "เกิดข้อผิดพลาด");
+        if (o.status !== "paid") {
+          box.innerHTML = `<h1>⌛ กำลังรอการชำระเงิน</h1>
+            <p>หากชำระแล้วยังไม่ขึ้น ลองรีเฟรชหน้านี้อีกครั้ง</p>
+            <button class="buy-btn" onclick="location.reload()">รีเฟรช</button>`;
+          return;
+        }
+        const links = (o.downloads || []).map((d) => `
+          <a class="dl-item" href="/store/download/${esc(d.token)}">
+            <span>⬇️ ${esc(d.title)}</span>
+            <small>ดาวน์โหลดได้อีก ${d.remaining} ครั้ง</small>
+          </a>`).join("");
+        box.innerHTML = `
+          <div class="check">✓</div>
+          <h1>ขอบคุณสำหรับการสั่งซื้อ!</h1>
+          <p>คำสั่งซื้อ #${esc(o.id)} ${o.email ? "• " + esc(o.email) : ""}</p>
+          <p class="hint">ดาวน์โหลดไฟล์ของคุณได้เลย (ลิงก์มีวันหมดอายุและจำกัดจำนวนครั้ง)</p>
+          <div class="dl-list">${links || "<p>ไม่มีไฟล์</p>"}</div>
+          <a class="back" href="/store">← กลับไปที่ร้าน</a>`;
+      } catch (e) {
+        box.innerHTML = `<h1>❌ ${esc(e.message)}</h1><a class="back" href="/store">← กลับไปที่ร้าน</a>`;
+      }
+    }
+    load();
+  </script>
+</body>
+</html>

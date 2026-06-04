@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# ผลลัพธ์ภาพที่สร้าง (ไฟล์ใหญ่ ไม่ควร commit)
+output/
+
+# ความลับ/คีย์ API — ห้าม commit
+.env
+credentials.json
+credentials.yaml
+secrets.yaml
+etsy_token.json

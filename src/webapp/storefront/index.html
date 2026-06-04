@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ร้านค้าดิจิทัล</title>
+  <link rel="stylesheet" href="/store/static/shop.css" />
+</head>
+<body>
+  <header class="shop-header">
+    <div class="wrap">
+      <h1 id="shop-name">ร้านค้า</h1>
+      <button id="cart-btn" class="cart-btn">🛒 ตะกร้า <span id="cart-count" class="cart-count">0</span></button>
+    </div>
+    <p id="shop-intro" class="intro wrap"></p>
+    <div id="mode-banner" class="mode-banner wrap" style="display:none;"></div>
+  </header>
+
+  <main class="wrap">
+    <div id="products" class="product-grid"></div>
+    <p id="empty" class="empty" style="display:none;">ยังไม่มีสินค้าวางขาย</p>
+  </main>
+
+  <!-- ตะกร้า -->
+  <div id="cart-overlay" class="cart-overlay" style="display:none;">
+    <div class="cart-panel">
+      <div class="cart-head">
+        <h2>ตะกร้าสินค้า</h2>
+        <button id="cart-close" class="x">✕</button>
+      </div>
+      <div id="cart-items" class="cart-items"></div>
+      <div class="cart-foot">
+        <div class="total">รวม: <b id="cart-total">0</b></div>
+        <button id="checkout-btn" class="buy-btn">ชำระเงิน →</button>
+        <p id="checkout-msg" class="msg"></p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="shop-footer wrap">
+    <p>ชำระเงินปลอดภัยผ่าน Stripe • ได้รับลิงก์ดาวน์โหลดทันทีหลังชำระเงิน</p>
+  </footer>
+
+  <script src="/store/static/shop.js"></script>
+</body>
+</html>

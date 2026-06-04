@@ -1,0 +1,203 @@
+# ===== การตั้งค่าระบบสร้างดีไซน์ Print-on-Demand ด้วย ComfyUI =====
+
+comfyui:
+  host: "127.0.0.1"
+  port: 8188
+  client_id: "pod-automation"
+  timeout_sec: 600          # เวลารอสูงสุดต่อ 1 ภาพ (วินาที)
+
+# ===== คลัง workflow (เลือกใช้ตอนสร้างภาพ) =====
+# แต่ละ workflow บอกว่าพารามิเตอร์ (prompt/seed/ขนาด/ฯลฯ) ไปลงที่ node ไหน input ไหน
+# map: ค่าเป็นลิสต์ของ [node_id, input_key] (1 ค่าไปได้หลาย node เช่น width ของ Flux)
+workflows:
+  sdxl:
+    label: "SDXL (เร็ว, มี negative prompt)"
+    path: "workflows/pod_base.json"
+    negative: true                 # รองรับ negative prompt
+    defaults: {steps: 30, cfg: 7.0, sampler_name: "dpmpp_2m", scheduler: "karras"}
+    save_image: "9"
+    map:
+      positive: [["6", "text"]]
+      negative: [["7", "text"]]
+      width: [["5", "width"]]
+      height: [["5", "height"]]
+      batch_size: [["5", "batch_size"]]
+      seed: [["3", "seed"]]
+      steps: [["3", "steps"]]
+      cfg: [["3", "cfg"]]
+      sampler_name: [["3", "sampler_name"]]
+      scheduler: [["3", "scheduler"]]
+      checkpoint: [["4", "ckpt_name"]]
+  flux2:
+    label: "Flux.2 dev (คุณภาพสูง, ไม่มี negative)"
+    path: "workflows/flux2_t2i.json"
+    negative: false                # Flux ใช้ guidance แทน negative prompt
+    defaults: {steps: 20, cfg: 4.0, sampler_name: "euler"}     # cfg = FluxGuidance
+    save_image: "9"
+    models:                        # โมเดลเฉพาะ Flux (เปลี่ยนได้ใน Settings)
+      checkpoint: "flux2_dev_fp8mixed.safetensors"   # = unet
+      clip: "mistral_3_small_flux2_bf16.safetensors"
+      vae: "full_encoder_small_decoder.safetensors"
+    map:
+      positive: [["6", "text"]]
+      width: [["47", "width"], ["48", "width"]]
+      height: [["47", "height"], ["48", "height"]]
+      batch_size: [["47", "batch_size"]]
+      seed: [["25", "noise_seed"]]
+      steps: [["48", "steps"]]
+      cfg: [["26", "guidance"]]
+      sampler_name: [["16", "sampler_name"]]
+      checkpoint: [["12", "unet_name"]]
+      clip: [["38", "clip_name"]]
+      vae: [["10", "vae_name"]]
+  flux2-turbo:
+    label: "Flux.2 Turbo (8 steps, เร็วกว่า ~2.5x)"
+    path: "workflows/flux2_turbo_t2i.json"
+    negative: false
+    defaults: {steps: 8, cfg: 4.0, sampler_name: "euler"}     # Turbo LoRA = 8 steps
+    save_image: "9"
+    models:
+      checkpoint: "flux2_dev_fp8mixed.safetensors"
+      clip: "mistral_3_small_flux2_bf16.safetensors"
+      vae: "full_encoder_small_decoder.safetensors"
+    map:
+      positive: [["6", "text"]]
+      width: [["47", "width"], ["48", "width"]]
+      height: [["47", "height"], ["48", "height"]]
+      batch_size: [["47", "batch_size"]]
+      seed: [["25", "noise_seed"]]
+      steps: [["48", "steps"]]
+      cfg: [["26", "guidance"]]
+      sampler_name: [["16", "sampler_name"]]
+      checkpoint: [["12", "unet_name"]]
+      clip: [["38", "clip_name"]]
+      vae: [["10", "vae_name"]]
+  flux2-gguf:
+    label: "Flux.2 GGUF (โมเดลเล็ก/เร็ว — ต้องโหลด .gguf)"
+    path: "workflows/flux2_gguf_t2i.json"
+    gguf: true                     # ใช้ UnetLoaderGGUF (รายชื่อโมเดลคนละ list)
+    negative: false
+    defaults: {steps: 20, cfg: 4.0, sampler_name: "euler"}
+    save_image: "9"
+    models:
+      # โหลดไฟล์ .gguf วางใน ComfyUI/models/unet แล้วใส่ชื่อตรงนี้ (หรือเลือกในหน้าเว็บ)
+      # แนะนำ: flux2-dev Q4_K_M (~7GB) เล็ก/เร็วกว่า fp8 มาก — ใช้ encoder+vae เดิมได้เลย
+      checkpoint: "flux2-dev-Q4_K_M.gguf"
+      clip: "mistral_3_small_flux2_bf16.safetensors"
+      vae: "full_encoder_small_decoder.safetensors"
+    map:
+      positive: [["6", "text"]]
+      width: [["47", "width"], ["48", "width"]]
+      height: [["47", "height"], ["48", "height"]]
+      batch_size: [["47", "batch_size"]]
+      seed: [["25", "noise_seed"]]
+      steps: [["48", "steps"]]
+      cfg: [["26", "guidance"]]
+      sampler_name: [["16", "sampler_name"]]
+      checkpoint: [["12", "unet_name"]]
+      clip: [["38", "clip_name"]]
+      vae: [["10", "vae_name"]]
+
+generation:
+  workflow: "sdxl"          # เลือก workflow ที่ใช้: sdxl | flux2 (ดูคลังด้านบน)
+  checkpoint: "sd_xl_base_1.0.safetensors"   # ชื่อไฟล์โมเดลใน ComfyUI\models\checkpoints
+                            # ว่าง "" = ใช้ค่าในไฟล์ workflow แทน
+  width: 1024
+  height: 1024
+  batch_size: 1
+  steps: 30
+  cfg: 7.0
+  sampler_name: "dpmpp_2m"
+  scheduler: "karras"
+  seed: -1                  # -1 = สุ่ม seed ใหม่ทุกครั้ง
+  default_negative: "low quality, blurry, watermark, text, signature, jpeg artifacts, deformed, extra fingers"
+
+# อัปสเกลด้วย NVIDIA RTX (RTXVideoSuperResolution) ในตัว ComfyUI ก่อนส่งกลับ
+# คมชัดกว่าการขยายด้วย Pillow มาก — ทำงานบน workflow ตอน generate เลย
+upscale:
+  method: "rtx"             # rtx | none  (none = ข้าม ใช้แค่ Pillow ใน postprocess)
+  scale: 4.0                # 1.0 - 4.0 เท่า (เช่น 1024 -> 4096)
+  quality: "ULTRA"          # LOW | MEDIUM | HIGH | ULTRA
+  node_id: "rtx_upscale"    # ชื่อ node ที่จะแทรก (ไม่ต้องแก้)
+
+postprocess:
+  enabled: true
+  target_width: 4500        # ความละเอียดไฟล์พร้อมขาย (px)
+  target_height: 5400       # 4500x5400 @ 300dpi = 15x18 นิ้ว เหมาะกับเสื้อยืด
+  dpi: 300
+  keep_aspect: true         # true = คงสัดส่วน วางกลาง canvas; false = ยืดเต็ม (อาจบิด)
+  background: "transparent"  # transparent | white
+  remove_background: false   # true = ลบพื้นหลังด้วย rembg (ได้ภาพตัดพื้นโปร่งจริง)
+  rembg_model: "u2net"       # u2net | isnet-general-use | birefnet-general | u2netp
+  save_preview_jpg: true
+  preview_max_px: 1200
+
+output:
+  dir: "output"
+
+prompts_csv: "prompts.csv"
+
+# โหมดหนังสือระบายสี (เปิดด้วย --coloring หรือเช็กบ็อกซ์ในหน้าเว็บ)
+# สร้างภาพลายเส้นขาว-ดำจาก prompt เดิม แล้วเก็บแยก slug ลงท้าย -coloring
+coloring:
+  positive_suffix: "black and white line art, coloring book page, clean bold outlines, no shading, no color, white background, high detail"
+  negative: "color, colored, shading, grayscale shading, gradient, photo, realistic, watermark, text, signature, deformed"
+  threshold:                 # null = เส้นนุ่ม; ใส่เลข 0-255 (เช่น 160) = ขาว-ดำคม
+
+# ทีม AI agents (Art Director -> Designer -> Prompt Engineer) ที่ช่วยคิด prompt
+# ใช้ Claude API — ต้องตั้ง ANTHROPIC_API_KEY (env) หรือ anthropic.api_key ใน credentials.yaml
+agents:
+  # provider: เลือกได้ — มีตัวฟรีให้เลือก
+  #   gemini  = Google Gemini (free tier, คีย์ฟรีจาก aistudio.google.com) ← ดีฟอลต์
+  #   ollama  = รันในเครื่อง ฟรี 100% ไม่ต้องมีคีย์ (ต้องลง Ollama + โหลดโมเดล)
+  #   groq    = Groq (free tier, คีย์ฟรีจาก console.groq.com)
+  #   anthropic = Claude (เสียเงิน คุณภาพสูงสุด)
+  #   openai  = OpenAI (เสียเงิน)
+  provider: "ollama"
+  model: ""                  # ว่าง = ใช้โมเดลดีฟอลต์ของ provider นั้น
+  base_url: ""               # override เฉพาะ ollama/openai custom (ปกติเว้นว่าง)
+  default_count: 6           # จำนวนไอเดียต่อการ brainstorm 1 ครั้ง
+  product: "print-on-demand designs (stickers, t-shirt prints, wall art)"
+  # โมเดลดีฟอลต์: gemini=gemini-2.0-flash, ollama=llama3.1,
+  #              groq=llama-3.3-70b-versatile, anthropic=claude-opus-4-8, openai=gpt-4o-mini
+
+# เว็บร้านขายเอง (สร้างไฟล์ static ลง docs/ เพื่อเอาขึ้น GitHub Pages ภายหลัง)
+site:
+  shop_name: "My POD Store"
+  currency: "THB"
+  price: 290                 # ราคาเริ่มต้นต่อชิ้น (ใช้ตอนยังไม่ตั้งราคารายชิ้น)
+  contact_email: ""          # อีเมลให้ลูกค้าติดต่อ (ใช้เป็น fallback ถ้ายังไม่ตั้ง gas_url)
+  line_id: ""                # LINE id ร้าน (ถ้ามี)
+  gas_url: "https://script.google.com/macros/s/AKfycbz3h4ev2z7QAa2aaDfL-bi3RLt5pK4jJ4dWSef_emKi-O4z5zlHMg7aeszZ5OKtABY/exec" # วางลิงก์ Google Apps Script web app (/exec) หลัง deploy
+  intro: "ดีไซน์งานศิลป์สร้างด้วย AI พิมพ์ลงเสื้อ/สติกเกอร์/โปสเตอร์ สั่งได้เลย"
+
+# ร้านขายไฟล์ดิจิทัลบน PC (Stripe Checkout) — เปิดที่ http://127.0.0.1:8500/store
+# คีย์ Stripe เก็บใน credentials.yaml (stripe.secret_key / publishable_key / webhook_secret)
+# ถ้ายังไม่ใส่คีย์ = โหมดทดสอบ (mock) จำลองการจ่ายเพื่อลองระบบส่งไฟล์
+store:
+  shop_name: "My Digital Store"
+  currency: "thb"             # thb | usd | eur ... (Stripe ใช้หน่วยย่อย ×100 ยกเว้น jpy/krw)
+  intro: "ดาวน์โหลดไฟล์ดิจิทัลคุณภาพสูง จ่ายแล้วได้ลิงก์ทันที"
+  download_expiry_days: 30    # ลิงก์ดาวน์โหลดหมดอายุในกี่วัน
+  max_downloads: 10           # ดาวน์โหลดได้กี่ครั้งต่อ 1 การซื้อ
+
+# ค่าตั้งต้นสำหรับการลงขาย (ใช้โดย src/upload_runner.py) — ส่วนที่เป็นความลับอยู่ใน credentials.yaml
+listing:
+  price: 19.99
+  currency: "USD"
+  state: "draft"            # draft | active  (เริ่มเป็น draft ก่อนปลอดภัยกว่า)
+  description_template: |
+    {title}
+
+    High-resolution print-ready design created by AI.
+    Tags: {tags}
+  etsy:
+    taxonomy_id: 1          # หมวดหมู่สินค้า Etsy — ต้องเปลี่ยนให้ตรงสินค้าจริง
+    who_made: "i_did"
+    when_made: "made_to_order"
+    type: "physical"        # physical | download
+    quantity: 999
+    shipping_profile_id:        # สินค้าจัดส่งจริงต้องใส่ id โปรไฟล์จัดส่ง
+  shopify:
+    product_type: "Wall Art"
+    vendor: "My POD Store"

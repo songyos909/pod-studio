@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>POD Studio — สร้างรูปขายออนไลน์</title>
+  <link rel="stylesheet" href="/static/style.css?v=5" />
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <header>
+    <h1><i data-lucide="palette"></i> POD Studio</h1>
+    <div class="status">
+      <span id="st-comfy" class="dot">ComfyUI</span>
+      <span id="st-claude" class="dot">AI Team</span>
+    </div>
+  </header>
+
+  <nav>
+    <button class="tab active" data-tab="studio"><i data-lucide="sparkles"></i> AI Studio</button>
+    <button class="tab" data-tab="prompts"><i data-lucide="clipboard-list"></i> Prompts</button>
+    <button class="tab" data-tab="generate"><i data-lucide="cpu"></i> สร้างภาพ</button>
+    <button class="tab" data-tab="gallery"><i data-lucide="image"></i> แกลเลอรี</button>
+    <button class="tab" data-tab="upload"><i data-lucide="upload-cloud"></i> อัปโหลดขาย</button>
+    <button class="tab" data-tab="shop"><i data-lucide="shopping-bag"></i> เว็บร้าน</button>
+    <button class="tab" data-tab="bundle"><i data-lucide="book-open"></i> PDF/หนังสือ</button>
+    <button class="tab" data-tab="ebooks"><i data-lucide="library"></i> คลัง E-book</button>
+    <button class="tab" data-tab="store"><i data-lucide="store"></i> ร้านขาย</button>
+    <button class="tab" data-tab="settings"><i data-lucide="settings"></i> ตั้งค่า</button>
+  </nav>
+
+  <main>
+    <!-- AI STUDIO -->
+    <section id="studio" class="panel active">
+      <h2>ทีม AI ช่วยคิดดีไซน์</h2>
+      <p class="hint">Art Director → Designer → Prompt Engineer ช่วยกันแปลงไอเดียเป็น prompt</p>
+      
+      <label>ไอเดีย / ธีม / กลุ่มลูกค้า</label>
+      <textarea id="brief" rows="3" placeholder="เช่น สติกเกอร์แมวสายอวกาศ สไตล์มินิมอล สำหรับวัยรุ่น"></textarea>
+
+      <div class="row">
+        <label>สไตล์ภาพ<select id="opt-style"></select></label>
+        <label>มุมกล้อง / องค์ประกอบ<select id="opt-camera"></select></label>
+        <label>โทนสี / อารมณ์<select id="opt-palette"></select></label>
+        <label>กลุ่มลูกค้า / โอกาส<select id="opt-audience"></select></label>
+      </div>
+      <label>คำสั่งเพิ่มเติม (เขียนเอง — เว้นว่างได้)</label>
+      <input id="opt-extra" type="text" placeholder="เช่น เน้นเส้นหนา ตัวการ์ตูนน่ารัก พื้นหลังโล่ง" />
+
+      <div class="row">
+        <label style="max-width: 150px;">จำนวนไอเดีย 
+          <input id="count" type="number" value="6" min="1" max="12" />
+        </label>
+        <button id="btn-brainstorm" class="primary"><i data-lucide="wand2"></i> ให้ทีม AI ช่วยคิด</button>
+      </div>
+      
+      <div id="studio-status" class="job-status"></div>
+      <div id="art-direction"></div>
+      <div id="designs" class="cards"></div>
+      <div id="studio-actions" style="display:none; margin-top: 20px;">
+        <button id="btn-add-selected" class="primary"><i data-lucide="plus-circle"></i> เพิ่มที่เลือกเข้า prompts.csv</button>
+      </div>
+    </section>
+
+    <!-- PROMPTS -->
+    <section id="prompts" class="panel">
+      <h2>รายการ prompts.csv</h2>
+      <div id="prompts-list"></div>
+      
+      <div style="margin-top: 32px; border-top: 1px solid var(--border); padding-top: 24px;">
+        <h3>เพิ่มเอง manually</h3>
+        <div class="row">
+          <label>Title
+            <input id="p-title" placeholder="เช่น Cute Astronaut Cat" />
+          </label>
+          <label>Prompt (บังคับ)
+            <input id="p-prompt" placeholder="เช่น sticker, cute cat in space suit, white background..." />
+          </label>
+        </div>
+        <div class="row">
+          <label>Negative Prompt (เว้นว่างได้)
+            <input id="p-negative" placeholder="เช่น low quality, ugly, text..." />
+          </label>
+          <label>Tags (คั่นด้วย ,)
+            <input id="p-tags" placeholder="เช่น sticker, cat, space" />
+          </label>
+        </div>
+        <div style="margin-top: 12px;">
+          <button id="btn-add-prompt" class="primary"><i data-lucide="plus"></i> เพิ่มเข้ารายการ</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- GENERATE -->
+    <section id="generate" class="panel">
+      <h2>สร้างภาพด้วย ComfyUI</h2>
+      <div class="row">
+        <label>จำกัดจำนวน (เว้นว่าง = ทั้งหมด) 
+          <input id="g-limit" type="number" min="1" placeholder="ทั้งหมด" />
+        </label>
+        <label>พื้นหลัง
+          <select id="g-bg">
+            <option value="default">ตาม config</option>
+            <option value="on">ลบพื้นหลัง</option>
+            <option value="off">ไม่ลบ</option>
+          </select>
+        </label>
+      </div>
+      <div class="row" style="align-items: center; margin-top: 10px;">
+        <label style="display: inline-flex; align-items: center; gap: 8px; cursor: pointer; text-transform: none;">
+          <input id="g-force" type="checkbox" /> สร้างใหม่แม้มีแล้ว
+        </label>
+        <label style="display: inline-flex; align-items: center; gap: 8px; cursor: pointer; text-transform: none;">
+          <input id="g-coloring" type="checkbox" /> โหมดหนังสือระบายสี (lineart)
+        </label>
+      </div>
+
+      <details class="settings-group" style="margin-top:20px;">
+        <summary><i data-lucide="sliders-horizontal"></i> ตัวเลือกการเจน (เว้นว่าง = ใช้ค่าใน Settings)</summary>
+        <div style="margin-top:16px;">
+          <div class="row">
+            <label>Workflow
+              <select id="g-workflow"></select>
+            </label>
+            <label>Checkpoint / โมเดล
+              <select id="g-ckpt"><option value="">— ใช้ค่า config —</option></select>
+            </label>
+            <button id="g-refresh-meta" type="button" style="margin-bottom:0;"><i data-lucide="refresh-cw"></i> โหลดจาก ComfyUI</button>
+          </div>
+          <p id="g-wf-hint" class="hint" style="margin:0 0 10px;"></p>
+          <div class="presets" id="g-gen-presets"></div>
+          <div class="row">
+            <label>กว้าง (px)<input id="g-width" type="number" placeholder="config" /></label>
+            <label>สูง (px)<input id="g-height" type="number" placeholder="config" /></label>
+            <label>Batch<input id="g-batch" type="number" placeholder="config" /></label>
+          </div>
+          <div class="row">
+            <label>Steps<input id="g-steps" type="number" placeholder="config" /></label>
+            <label>CFG<input id="g-cfg" type="number" step="0.5" placeholder="config" /></label>
+            <label>Seed (-1=สุ่ม)<input id="g-seed" type="number" placeholder="config" /></label>
+          </div>
+          <div class="row">
+            <label>Sampler<select id="g-sampler"><option value="">— ใช้ค่า config —</option></select></label>
+            <label>Scheduler<select id="g-scheduler"><option value="">— ใช้ค่า config —</option></select></label>
+          </div>
+        </div>
+      </details>
+
+      <div style="margin-top: 20px;">
+        <button id="btn-generate" class="primary"><i data-lucide="play"></i> เริ่มสร้างภาพ</button>
+      </div>
+      <div style="margin-top: 24px;">
+        <label>Log การสร้างภาพ</label>
+        <pre id="gen-log" class="log"></pre>
+      </div>
+    </section>
+
+    <!-- GALLERY -->
+    <section id="gallery" class="panel">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2 style="margin: 0;">แกลเลอรีดีไซน์ที่สร้างแล้ว</h2>
+        <button id="btn-refresh-gallery"><i data-lucide="refresh-cw"></i> รีเฟรช</button>
+      </div>
+      <div id="gallery-grid" class="gallery-grid"></div>
+    </section>
+
+    <!-- UPLOAD -->
+    <section id="upload" class="panel">
+      <h2>อัปโหลดขึ้นร้านค้า</h2>
+      <p class="hint">ต้องกรอก credentials.yaml ก่อน (ดู README) — แนะนำให้กดทดสอบการเชื่อมต่อก่อนอัปจริง</p>
+      
+      <div class="row">
+        <label>แพลตฟอร์ม
+          <select id="u-platform">
+            <option value="shopify">Shopify</option>
+            <option value="etsy">Etsy</option>
+          </select>
+        </label>
+        <label>จำกัดจำนวนการอัปโหลด
+          <input id="u-limit" type="number" min="1" placeholder="ทั้งหมด" />
+        </label>
+        <label style="display: inline-flex; align-items: center; gap: 8px; cursor: pointer; text-transform: none; margin-bottom: 12px;">
+          <input id="u-preview" type="checkbox" /> ใช้รูป preview
+        </label>
+      </div>
+      
+      <div class="row" style="margin-top: 20px;">
+        <button id="btn-validate"><i data-lucide="plugin"></i> ทดสอบการเชื่อมต่อ</button>
+        <button id="btn-upload" class="primary"><i data-lucide="rocket"></i> อัปโหลดจริง</button>
+      </div>
+      
+      <div style="margin-top: 24px;">
+        <label>Log การอัปโหลด</label>
+        <pre id="upload-log" class="log"></pre>
+      </div>
+    </section>
+
+    <!-- SHOP -->
+    <section id="shop" class="panel">
+      <h2>เว็บร้านขายเอง (บนเครื่อง)</h2>
+      <p class="hint">สร้างไฟล์ static ลงโฟลเดอร์ docs/ — เอาขึ้น GitHub Pages ภายหลังได้</p>
+      
+      <div class="row">
+        <button id="btn-build-site" class="primary"><i data-lucide="hammer"></i> สร้าง / อัปเดตหน้าร้าน</button>
+        <a id="open-shop" href="/shop/" target="_blank">เปิดหน้าร้านพรีวิว <i data-lucide="external-link"></i></a>
+      </div>
+      
+      <div id="site-msg" class="job-status"></div>
+      
+      <div style="margin-top: 20px; background: rgba(255,255,255,0.02); padding: 16px; border-radius: 10px; border: 1px solid var(--border);">
+        <p class="hint" style="margin: 0;">💡 รับออเดอร์อัตโนมัติด้วย Google Apps Script — ดูวิธีเปิดใช้งานได้ใน <code>gas/README.md</code> แล้วนำ URL มาใส่ใน <code>config.yaml</code> ตรงหัวข้อ <code>site.gas_url</code></p>
+      </div>
+    </section>
+
+    <!-- BUNDLE -->
+    <section id="bundle" class="panel">
+      <h2>รวมดีไซน์เป็น PDF พร้อมขาย</h2>
+      <p class="hint">เลือกดีไซน์ด้านล่างเพื่อทำการจัดเล่มและทำเป็นไฟล์ PDF พร้อมหน้าปก (เหมาะสำหรับการทำ Coloring Book ขาย Gumroad/Etsy)</p>
+      
+      <div class="row">
+        <label style="flex: 2;">ชื่อเล่มหนังสือ
+          <input id="b-title" placeholder="เช่น Wildflower Coloring Book" />
+        </label>
+        <label style="flex: 1;">ขนาดหน้ากระดาษ
+          <select id="b-size">
+            <option value="A4">A4</option>
+            <option value="letter">Letter</option>
+          </select>
+        </label>
+      </div>
+      <div class="row" style="align-items:center;">
+        <label class="chk"><input id="b-pagenum" type="checkbox" /> พิมพ์เลขหน้าลงภาพ</label>
+        <label class="chk"><input id="b-cover" type="checkbox" checked /> ใส่หน้าปก</label>
+        <label class="upload-btn">
+          <i data-lucide="image-plus"></i> เพิ่มรูปจากเครื่อง
+          <input id="b-upload" type="file" accept="image/*" multiple hidden />
+        </label>
+      </div>
+
+      <div class="bundle-layout">
+        <div class="bundle-pool">
+          <h3 style="font-size:14px;margin:0 0 10px;">คลังรูป (กดเพื่อเพิ่มเข้าเล่ม)</h3>
+          <div id="bundle-grid" class="gallery-grid compact"></div>
+        </div>
+        <div class="bundle-order">
+          <h3 style="font-size:14px;margin:0 0 10px;">ลำดับหน้าในเล่ม <span id="b-count" class="badge"></span></h3>
+          <div id="bundle-seq" class="seq-list"></div>
+        </div>
+      </div>
+
+      <div class="row" style="margin-top: 20px;">
+        <button id="btn-bundle" class="primary"><i data-lucide="file-pdf"></i> สร้าง PDF</button>
+        <button id="b-clear"><i data-lucide="x-circle"></i> ล้างลำดับ</button>
+        <span id="bundle-msg" class="job-status"></span>
+      </div>
+    </section>
+
+    <!-- EBOOKS -->
+    <section id="ebooks" class="panel">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <h2 style="margin:0;">คลัง E-book (PDF ที่สร้างไว้)</h2>
+        <button id="btn-refresh-ebooks"><i data-lucide="refresh-cw"></i> รีเฟรช</button>
+      </div>
+      <p class="hint">ไฟล์จากแท็บ PDF/หนังสือ — เปิดดู ดาวน์โหลด หรือลบ (ย้ายถังขยะ กู้คืนได้)</p>
+      <div id="ebooks-grid" class="gallery-grid"></div>
+    </section>
+
+    <!-- STORE (admin) -->
+    <section id="store" class="panel">
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap;">
+        <div>
+          <h2 style="margin:0;">ร้านขายไฟล์ดิจิทัล (Stripe)</h2>
+          <p class="hint" style="margin:6px 0 0;">ตั้งสินค้า → ลูกค้าจ่ายผ่าน Stripe → ได้ลิงก์ดาวน์โหลดอัตโนมัติ</p>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <span id="store-mode" class="badge"></span>
+          <a id="open-store" href="/store" target="_blank" class="modal-link">เปิดหน้าร้าน <i data-lucide="external-link"></i></a>
+        </div>
+      </div>
+      <div id="store-status" class="dim-readout" style="margin-top:14px;"></div>
+
+      <!-- เพิ่ม/แก้สินค้า -->
+      <div class="settings-group">
+        <h3><i data-lucide="package-plus"></i> เพิ่ม / แก้สินค้า</h3>
+        <input type="hidden" id="sp-id" />
+        <div class="row">
+          <label>เลือกไฟล์ต้นทาง (E-book / ดีไซน์)
+            <select id="sp-source"><option value="">— เลือกไฟล์ —</option></select>
+          </label>
+          <label>ราคา<input id="sp-price" type="number" min="0" placeholder="เช่น 99" /></label>
+          <label>สกุลเงิน<input id="sp-currency" type="text" value="thb" /></label>
+        </div>
+        <label>ชื่อสินค้า<input id="sp-title" type="text" placeholder="เช่น Wildflower Coloring Book (30 หน้า)" /></label>
+        <label>รายละเอียด<input id="sp-desc" type="text" placeholder="คำอธิบายสั้นๆ ที่ลูกค้าเห็น" /></label>
+        <input type="hidden" id="sp-file" />
+        <input type="hidden" id="sp-preview" />
+        <div class="row" style="align-items:center;">
+          <label class="chk"><input id="sp-active" type="checkbox" checked /> เปิดขาย</label>
+          <div id="sp-filehint" class="hint" style="margin:0; flex:2;"></div>
+        </div>
+        <div style="margin-top:14px; display:flex; gap:10px;">
+          <button id="sp-save" class="primary"><i data-lucide="save"></i> บันทึกสินค้า</button>
+          <button id="sp-reset"><i data-lucide="x-circle"></i> ล้างฟอร์ม</button>
+          <span id="sp-msg" class="job-status"></span>
+        </div>
+      </div>
+
+      <!-- รายการสินค้า -->
+      <div class="settings-group">
+        <h3><i data-lucide="shopping-bag"></i> สินค้าในร้าน</h3>
+        <div id="store-products" class="gallery-grid"></div>
+      </div>
+
+      <!-- คำสั่งซื้อ -->
+      <div class="settings-group">
+        <h3><i data-lucide="receipt"></i> คำสั่งซื้อล่าสุด</h3>
+        <div id="store-orders"></div>
+      </div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section id="settings" class="panel">
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap;">
+        <div>
+          <h2 style="margin:0;">ตั้งค่าระบบ</h2>
+          <p class="hint" style="margin:6px 0 0;">แก้ค่าทุกอย่างได้จากที่นี่ — กดบันทึกแล้วเขียนลง <code>config.yaml</code> (คอมเมนต์เดิมไม่หาย) มีผลกับงานครั้งถัดไป</p>
+        </div>
+        <button id="btn-save-config" class="primary"><i data-lucide="save"></i> บันทึกการตั้งค่า</button>
+      </div>
+      <div id="cfg-msg" class="job-status"></div>
+
+      <!-- ===== ขนาดภาพ ===== -->
+      <div class="settings-group">
+        <h3><i data-lucide="ruler"></i> ขนาดภาพที่ AI เจน <span class="badge">SDXL</span></h3>
+        <p class="hint" style="margin-top:0;">ขนาดที่โมเดลวาดจริง — SDXL ทำงานดีที่สุดราว 1 ล้านพิกเซล เลือก preset แล้วค่าจะเติมให้</p>
+        <div class="presets" id="gen-presets"></div>
+        <div class="row">
+          <label>กว้าง (px)<input id="cfg-generation.width" type="number" data-cfg="generation.width" /></label>
+          <label>สูง (px)<input id="cfg-generation.height" type="number" data-cfg="generation.height" /></label>
+          <label>batch ต่อ prompt<input id="cfg-generation.batch_size" type="number" data-cfg="generation.batch_size" /></label>
+        </div>
+      </div>
+
+      <!-- ===== ขนาดไฟล์พิมพ์ขาย ===== -->
+      <div class="settings-group">
+        <h3><i data-lucide="printer"></i> ขนาดไฟล์พร้อมพิมพ์ขาย <span class="badge alt">หลังอัปสเกล</span></h3>
+        <p class="hint" style="margin-top:0;">ขนาดไฟล์สุดท้ายที่เอาไปขาย/พิมพ์จริง (อัปสเกล RTX แล้วจัดลง canvas นี้)</p>
+        <div class="presets" id="print-presets"></div>
+        <div class="row">
+          <label>กว้าง (px)<input id="cfg-postprocess.target_width" type="number" data-cfg="postprocess.target_width" /></label>
+          <label>สูง (px)<input id="cfg-postprocess.target_height" type="number" data-cfg="postprocess.target_height" /></label>
+          <label>DPI<input id="cfg-postprocess.dpi" type="number" data-cfg="postprocess.dpi" /></label>
+        </div>
+        <div class="row">
+          <label>พื้นหลัง
+            <select id="cfg-postprocess.background" data-cfg="postprocess.background">
+              <option value="transparent">โปร่งใส (PNG)</option>
+              <option value="white">ขาว</option>
+            </select>
+          </label>
+          <label class="chk"><input id="cfg-postprocess.remove_background" type="checkbox" data-cfg="postprocess.remove_background" /> ลบพื้นหลังด้วย rembg</label>
+          <label class="chk"><input id="cfg-postprocess.keep_aspect" type="checkbox" data-cfg="postprocess.keep_aspect" /> คงสัดส่วน</label>
+        </div>
+        <div class="dim-readout" id="dim-readout"></div>
+      </div>
+
+      <!-- ===== โมเดล & การ generate ===== -->
+      <div class="settings-group">
+        <h3><i data-lucide="cpu"></i> โมเดล & พารามิเตอร์การ generate</h3>
+        <div class="row">
+          <label>Checkpoint (โมเดล)
+            <select id="cfg-generation.checkpoint" data-cfg="generation.checkpoint"></select>
+          </label>
+          <button id="btn-refresh-meta" type="button" style="margin-bottom:0;"><i data-lucide="refresh-cw"></i> โหลดรายชื่อจาก ComfyUI</button>
+        </div>
+        <div class="row">
+          <label>Steps<input id="cfg-generation.steps" type="number" data-cfg="generation.steps" /></label>
+          <label>CFG<input id="cfg-generation.cfg" type="number" step="0.5" data-cfg="generation.cfg" /></label>
+          <label>Seed (-1 = สุ่ม)<input id="cfg-generation.seed" type="number" data-cfg="generation.seed" /></label>
+        </div>
+        <div class="row">
+          <label>Sampler<select id="cfg-generation.sampler_name" data-cfg="generation.sampler_name"></select></label>
+          <label>Scheduler<select id="cfg-generation.scheduler" data-cfg="generation.scheduler"></select></label>
+        </div>
+        <label>Negative prompt เริ่มต้น<input id="cfg-generation.default_negative" type="text" data-cfg="generation.default_negative" /></label>
+      </div>
+
+      <!-- ===== อัปสเกล RTX ===== -->
+      <div class="settings-group">
+        <h3><i data-lucide="zap"></i> อัปสเกล NVIDIA RTX</h3>
+        <div class="row">
+          <label>วิธี
+            <select id="cfg-upscale.method" data-cfg="upscale.method">
+              <option value="rtx">RTX (คมชัด)</option>
+              <option value="none">ปิด (ใช้ Pillow)</option>
+            </select>
+          </label>
+          <label>สเกล (1–4 เท่า)<input id="cfg-upscale.scale" type="number" step="0.5" min="1" max="4" data-cfg="upscale.scale" /></label>
+          <label>คุณภาพ
+            <select id="cfg-upscale.quality" data-cfg="upscale.quality">
+              <option>LOW</option><option>MEDIUM</option><option>HIGH</option><option>ULTRA</option>
+            </select>
+          </label>
+        </div>
+      </div>
+
+      <!-- ===== ComfyUI ===== -->
+      <div class="settings-group">
+        <h3><i data-lucide="server"></i> การเชื่อมต่อ ComfyUI</h3>
+        <div class="row">
+          <label>Host<input id="cfg-comfyui.host" type="text" data-cfg="comfyui.host" /></label>
+          <label>Port<input id="cfg-comfyui.port" type="number" data-cfg="comfyui.port" /></label>
+          <label>Timeout (วินาที/ภาพ)<input id="cfg-comfyui.timeout_sec" type="number" data-cfg="comfyui.timeout_sec" /></label>
+        </div>
+      </div>
+
+      <!-- ===== ทีม AI ===== -->
+      <div class="settings-group">
+        <h3><i data-lucide="bot"></i> ทีม AI (ช่วยคิด prompt)</h3>
+        <div class="row">
+          <label>Provider
+            <select id="cfg-agents.provider" data-cfg="agents.provider">
+              <option value="gemini">Gemini (ฟรี)</option>
+              <option value="ollama">Ollama (ฟรี/ในเครื่อง)</option>
+              <option value="groq">Groq (ฟรี)</option>
+              <option value="anthropic">Claude (เสียเงิน)</option>
+              <option value="openai">OpenAI (เสียเงิน)</option>
+            </select>
+          </label>
+          <label>โมเดล (ว่าง = ดีฟอลต์)<input id="cfg-agents.model" type="text" data-cfg="agents.model" placeholder="เช่น llama3.1" /></label>
+          <label>จำนวนไอเดีย/ครั้ง<input id="cfg-agents.default_count" type="number" data-cfg="agents.default_count" /></label>
+        </div>
+        <label>Base URL (เฉพาะ ollama/openai custom — ปกติเว้นว่าง)<input id="cfg-agents.base_url" type="text" data-cfg="agents.base_url" /></label>
+        <label>ประเภทสินค้า (บอกทีม AI)<input id="cfg-agents.product" type="text" data-cfg="agents.product" /></label>
+        <p class="hint" id="provider-hint" style="margin-bottom:0;"></p>
+      </div>
+
+      <!-- ===== เว็บร้าน ===== -->
+      <div class="settings-group">
+        <h3><i data-lucide="store"></i> เว็บร้านขายเอง</h3>
+        <div class="row">
+          <label>ชื่อร้าน<input id="cfg-site.shop_name" type="text" data-cfg="site.shop_name" /></label>
+          <label>สกุลเงิน<input id="cfg-site.currency" type="text" data-cfg="site.currency" /></label>
+          <label>ราคา/ชิ้น<input id="cfg-site.price" type="number" data-cfg="site.price" /></label>
+        </div>
+        <div class="row">
+          <label>อีเมลติดต่อ<input id="cfg-site.contact_email" type="text" data-cfg="site.contact_email" /></label>
+          <label>LINE ID<input id="cfg-site.line_id" type="text" data-cfg="site.line_id" /></label>
+        </div>
+        <label>Google Apps Script URL (/exec)<input id="cfg-site.gas_url" type="text" data-cfg="site.gas_url" /></label>
+        <label>คำโปรยหน้าร้าน<input id="cfg-site.intro" type="text" data-cfg="site.intro" /></label>
+      </div>
+
+      <div style="margin-top:24px; display:flex; justify-content:flex-end;">
+        <button id="btn-save-config2" class="primary"><i data-lucide="save"></i> บันทึกการตั้งค่า</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- modal กลาง (ใช้ทั้ง lightbox แกลเลอรี และ viewer E-book) -->
+  <div id="modal" class="modal-overlay" style="display:none;">
+    <div class="modal-box">
+      <button id="modal-close" class="modal-close" aria-label="ปิด"><i data-lucide="x"></i></button>
+      <div id="modal-body"></div>
+    </div>
+  </div>
+
+  <script src="/static/app.js?v=5"></script>
+  <script>
+    // Initialize Lucide Icons
+    lucide.createIcons();
+  </script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+{
+  "shop": {
+    "name": "My POD Store",
+    "currency": "THB",
+    "intro": "ดีไซน์งานศิลป์สร้างด้วย AI พิมพ์ลงเสื้อ/สติกเกอร์/โปสเตอร์ สั่งได้เลย",
+    "contact_email": "",
+    "line_id": "",
+    "gas_url": ""
+  },
+  "products": [
+    {
+      "title": "Galaxy Cat Sticker",
+      "slug": "galaxy-cat-sticker",
+      "price": 290,
+      "tags": "cat,galaxy,sticker,cute",
+      "image": "previews/galaxy-cat-sticker.jpg"
+    },
+    {
+      "title": "Retro Mountain Sunrise",
+      "slug": "retro-mountain-sunrise",
+      "price": 290,
+      "tags": "mountain,retro,nature,vintage",
+      "image": "previews/retro-mountain-sunrise.jpg"
+    },
+    {
+      "title": "Kawaii Coffee Cup",
+      "slug": "kawaii-coffee-cup",
+      "price": 290,
+      "tags": "coffee,kawaii,cute,drink",
+      "image": "previews/kawaii-coffee-cup.jpg"
+    },
+    {
+      "title": "Wildflower Bouquet",
+      "slug": "wildflower-bouquet",
+      "price": 290,
+      "tags": "flower,watercolor,botanical,floral",
+      "image": "previews/wildflower-bouquet.jpg"
+    },
+    {
+      "title": "Mystic Moon Phases",
+      "slug": "mystic-moon-phases",
+      "price": 290,
+      "tags": "moon,celestial,boho,mystic",
+      "image": "previews/mystic-moon-phases.jpg"
+    },
+    {
+      "title": "rubit can run a cat",
+      "slug": "rubit-can-run-a-cat",
+      "price": 290,
+      "tags": "animal cute white&black",
+      "image": "previews/rubit-can-run-a-cat.jpg"
+    },
+    {
+      "title": "Galaxy Cat Sticker",
+      "slug": "galaxy-cat-sticker-coloring",
+      "price": 290,
+      "tags": "cat,galaxy,sticker,cute",
+      "image": "previews/galaxy-cat-sticker-coloring.jpg"
+    },
+    {
+      "title": "Wildflower Bouquet",
+      "slug": "wildflower-bouquet-coloring",
+      "price": 290,
+      "tags": "flower,coloring",
+      "image": "previews/wildflower-bouquet-coloring.jpg"
+    }
+  ]
+}

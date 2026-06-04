@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ร้านดีไซน์</title>
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <header class="shop-header">
+    <h1 id="shop-name">ร้านดีไซน์</h1>
+    <p id="shop-intro"></p>
+  </header>
+
+  <main>
+    <div id="grid" class="shop-grid"></div>
+    <p id="empty" class="shop-empty" style="display:none">ยังไม่มีสินค้า — กลับมาใหม่เร็ว ๆ นี้</p>
+  </main>
+
+  <footer class="shop-footer">
+    <span id="shop-contact"></span>
+    <span class="credit">สร้างด้วย POD Studio</span>
+  </footer>
+
+  <!-- modal สั่งซื้อ -->
+  <div id="modal" class="modal" style="display:none">
+    <div class="modal-box">
+      <button id="modal-close" class="modal-close">✕</button>
+      <img id="m-img" class="m-img" alt="" />
+      <h2 id="m-title"></h2>
+      <div id="m-price" class="m-price"></div>
+      <div id="m-tags" class="m-tags"></div>
+      <form id="order-form">
+        <label>ชื่อผู้สั่ง<input name="name" required /></label>
+        <label>อีเมล<input name="email" type="email" required /></label>
+        <label>จำนวน<input name="qty" type="number" value="1" min="1" /></label>
+        <label>หมายเหตุ (ไซส์/สี/ที่อยู่)<textarea name="note" rows="2"></textarea></label>
+        <button type="submit" class="buy-btn">สั่งซื้อ</button>
+        <div id="order-msg" class="order-msg"></div>
+      </form>
+    </div>
+  </div>
+
+  <script src="assets/app.js"></script>
+</body>
+</html>

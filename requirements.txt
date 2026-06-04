@@ -1,0 +1,22 @@
+requests>=2.31
+websocket-client>=1.7
+Pillow>=10.0
+PyYAML>=6.0
+ruamel.yaml>=0.18      # เขียน config.yaml จากหน้าเว็บโดยคงคอมเมนต์เดิมไว้
+pypdf>=4.0             # นับจำนวนหน้า PDF ในคลัง E-book (ถ้าไม่มีจะนับแบบหยาบแทน)
+python-multipart>=0.0.6  # รับไฟล์อัปโหลด (เพิ่มรูปเองใน PDF)
+
+# สำหรับลบพื้นหลัง (เครื่องมือ remove_bg) — ถ้าไม่ใช้ฟีเจอร์นี้จะข้ามได้
+rembg>=2.0
+onnxruntime>=1.16
+
+# ทีม AI agents + หน้าเว็บ UI
+# anthropic = Claude; openai = ใช้คุยกับ Gemini/Groq/Ollama/OpenAI (OpenAI-compatible)
+anthropic>=0.49
+openai>=1.0
+fastapi>=0.110
+uvicorn>=0.27
+
+# ระบบขายไฟล์ดิจิทัล (Stripe Checkout + ส่งไฟล์อัตโนมัติ)
+stripe>=8.0
+python-multipart>=0.0.6   # FastAPI ใช้รับฟอร์ม/อัปโหลด

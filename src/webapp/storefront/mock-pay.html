@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ทดสอบการชำระเงิน (จำลอง)</title>
+  <link rel="stylesheet" href="/store/static/shop.css" />
+</head>
+<body>
+  <main class="wrap success-wrap">
+    <div class="success-box">
+      <div class="mock-badge">โหมดทดสอบ (จำลอง)</div>
+      <h1>หน้าชำระเงินจำลอง</h1>
+      <p class="hint">ยังไม่ได้ตั้งค่าคีย์ Stripe — นี่คือการจำลองเพื่อทดสอบระบบส่งไฟล์<br>
+        เมื่อใส่คีย์ Stripe จริงแล้ว ปุ่มนี้จะถูกแทนด้วยหน้าชำระเงินจริงของ Stripe</p>
+      <button id="pay" class="buy-btn">✓ จำลองว่าชำระเงินสำเร็จ</button>
+      <p id="msg" class="msg"></p>
+      <a class="back" href="/store">← ยกเลิก กลับไปที่ร้าน</a>
+    </div>
+  </main>
+  <script>
+    const oid = new URLSearchParams(location.search).get("order_id");
+    document.getElementById("pay").onclick = async () => {
+      document.getElementById("msg").textContent = "กำลังดำเนินการ...";
+      try {
+        const r = await fetch("/store/mock-pay/confirm?order_id=" + encodeURIComponent(oid), { method: "POST" });
+        const d = await r.json();
+        if (!r.ok) throw new Error(d.error || "ผิดพลาด");
+        location.href = "/store/success?session_id=" + encodeURIComponent(d.session_id);
+      } catch (e) {
+        document.getElementById("msg").textContent = "❌ " + e.message;
+      }
+    };
+  </script>
+</body>
+</html>
