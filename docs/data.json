@@ -5,16 +5,9 @@
     "intro": "ดีไซน์งานศิลป์สร้างด้วย AI พิมพ์ลงเสื้อ/สติกเกอร์/โปสเตอร์ สั่งได้เลย",
     "contact_email": "",
     "line_id": "",
-    "gas_url": ""
+    "gas_url": "https://script.google.com/macros/s/AKfycbz3h4ev2z7QAa2aaDfL-bi3RLt5pK4jJ4dWSef_emKi-O4z5zlHMg7aeszZ5OKtABY/exec"
   },
   "products": [
-    {
-      "title": "Galaxy Cat Sticker",
-      "slug": "galaxy-cat-sticker",
-      "price": 290,
-      "tags": "cat,galaxy,sticker,cute",
-      "image": "previews/galaxy-cat-sticker.jpg"
-    },
     {
       "title": "Retro Mountain Sunrise",
       "slug": "retro-mountain-sunrise",
@@ -63,6 +56,139 @@
       "price": 290,
       "tags": "flower,coloring",
       "image": "previews/wildflower-bouquet-coloring.jpg"
+    },
+    {
+      "title": "T-Rex King Sticker",
+      "slug": "t-rex-king-sticker-coloring",
+      "price": 290,
+      "tags": "t rex, stickers, dinosaur, print on demand",
+      "image": "previews/t-rex-king-sticker-coloring.jpg"
+    },
+    {
+      "title": "Dino Egg Hatching Sticker",
+      "slug": "dino-egg-hatching-sticker-coloring",
+      "price": 290,
+      "tags": "dino eggs, hatching, stickers, dinosaur, print on demand",
+      "image": "previews/dino-egg-hatching-sticker-coloring.jpg"
+    },
+    {
+      "title": "Pterodactyl Soar Wall Art",
+      "slug": "pterodactyl-soar-wall-art-coloring",
+      "price": 290,
+      "tags": "pterodactyl, wall art, print on demand, dinosaur",
+      "image": "previews/pterodactyl-soar-wall-art-coloring.jpg"
+    },
+    {
+      "title": "Dino Footprint Art Print",
+      "slug": "dino-footprint-art-print-coloring",
+      "price": 290,
+      "tags": "dino footprints, art print, dinosaur, print on demand",
+      "image": "previews/dino-footprint-art-print-coloring.jpg"
+    },
+    {
+      "title": "Velociraptor Pack T-Shirt Print",
+      "slug": "velociraptor-pack-t-shirt-print-coloring",
+      "price": 290,
+      "tags": "velociraptor pack, t shirt print, dinosaur",
+      "image": "previews/velociraptor-pack-t-shirt-print-coloring.jpg"
+    },
+    {
+      "title": "Dino World Map Sticker",
+      "slug": "dino-world-map-sticker-coloring",
+      "price": 290,
+      "tags": "dino world map, stickers, dinosaur, print on demand",
+      "image": "previews/dino-world-map-sticker-coloring.jpg"
+    },
+    {
+      "title": "Forest Friends",
+      "slug": "forest-friends-coloring",
+      "price": 290,
+      "tags": "kids, dinosaurs, friends, forest, pop art",
+      "image": "previews/forest-friends-coloring.jpg"
+    },
+    {
+      "title": "Prehistoric Pals",
+      "slug": "prehistoric-pals-coloring",
+      "price": 290,
+      "tags": "kids, dinosaurs, friends, prehistoric, pop art",
+      "image": "previews/prehistoric-pals-coloring.jpg"
+    },
+    {
+      "title": "Jungle Adventure",
+      "slug": "jungle-adventure-coloring",
+      "price": 290,
+      "tags": "kids, dinosaurs, adventure, jungle, pop art",
+      "image": "previews/jungle-adventure-coloring.jpg"
+    },
+    {
+      "title": "Jungle Buddies",
+      "slug": "jungle-buddies-coloring",
+      "price": 290,
+      "tags": "kids, dinosaurs, friends, jungle, pop art",
+      "image": "previews/jungle-buddies-coloring.jpg"
+    },
+    {
+      "title": "Dino's Sunny Day",
+      "slug": "dinos-sunny-day-coloring",
+      "price": 290,
+      "tags": "happy dinosaur, sunshine, tree, butterflies, kid's art",
+      "image": "previews/dinos-sunny-day-coloring.jpg"
+    },
+    {
+      "title": "Chang's Jungle Home",
+      "slug": "changs-jungle-home-coloring",
+      "price": 290,
+      "tags": "adorable elephant, jungle home, swing, flowers, kid's art",
+      "image": "previews/changs-jungle-home-coloring.jpg"
+    },
+    {
+      "title": "Dino-Mite Friendship",
+      "slug": "dino-mite-friendship-coloring",
+      "price": 290,
+      "tags": "dino-mite friendship, happy t-rex, elephant duo, kid's art",
+      "image": "previews/dino-mite-friendship-coloring.jpg"
+    },
+    {
+      "title": "Forest Friends' Picnic",
+      "slug": "forest-friends-picnic-coloring",
+      "price": 290,
+      "tags": "whimsical picnic, forest friends, t-rex and elephant, kid's art",
+      "image": "previews/forest-friends-picnic-coloring.jpg"
+    },
+    {
+      "title": "Chang's Garden",
+      "slug": "changs-garden-coloring",
+      "price": 290,
+      "tags": "elephant in garden, colorful flowers, fruits, kid's art",
+      "image": "previews/changs-garden-coloring.jpg"
+    },
+    {
+      "title": "Dino's Nighttime Adventure",
+      "slug": "dinos-nighttime-adventure-coloring",
+      "price": 290,
+      "tags": "dino's nighttime adventure, fireflies, full moon, kid's art",
+      "image": "previews/dinos-nighttime-adventure-coloring.jpg"
+    },
+    {
+      "title": "Prehistoric Pals Playdate",
+      "slug": "prehistoric-pals-playdate-coloring",
+      "price": 290,
+      "tags": "prehistoric pals, playdate, dinosaurs, elephant, friendship, isometric illustration, hand-drawn doodle, black and white",
+      "image": "previews/prehistoric-pals-playdate-coloring.jpg"
+    },
+    {
+      "title": "Mew Mew Morning",
+      "slug": "mew-mew-morning-coloring",
+      "price": 290,
+      "tags": "cat, cartoon, sleeping, morning, sunbeams, clouds, watercolor",
+      "image": "previews/mew-mew-morning-coloring.jpg"
+    },
+    {
+      "title": "Purrfectly Polka",
+      "slug": "purrfectly-polka-coloring",
+      "price": 290,
+      "tags": "cat, stylized, face, polka dots, playful",
+      "image": "previews/purrfectly-polka-coloring.jpg"
     }
   ]
 }
