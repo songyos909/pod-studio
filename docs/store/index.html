@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ร้านดาวน์โหลดดิจิทัล</title>
+  <link rel="stylesheet" href="shop.css" />
+  <script src="config.js"></script>
+</head>
+<body>
+  <header class="shop-header">
+    <div class="wrap">
+      <h1 id="shop-name">ร้านดาวน์โหลด</h1>
+      <button id="cart-btn" class="cart-btn">🛒 <span id="cart-count">0</span></button>
+    </div>
+    <p id="shop-intro" class="intro wrap">ไฟล์ดิจิทัลคุณภาพสูง จ่ายแล้วได้ลิงก์ทันที</p>
+    <div id="banner" class="banner wrap" style="display:none;"></div>
+  </header>
+
+  <main class="wrap">
+    <div id="grid" class="product-grid"></div>
+    <p id="empty" class="empty" style="display:none;">กำลังโหลดสินค้า...</p>
+  </main>
+
+  <div id="cart-overlay" class="cart-overlay" style="display:none;">
+    <div class="cart-panel">
+      <div class="cart-head"><h2>ตะกร้า</h2><button id="cart-close" class="x">✕</button></div>
+      <div id="cart-items" class="cart-items"></div>
+      <div class="cart-foot">
+        <div class="total">รวม: <b id="cart-total">0</b></div>
+        <button id="checkout-btn" class="buy-btn">ชำระเงินผ่าน Stripe →</button>
+        <p class="hint" style="text-align:center;margin:8px 0 0;">บัตรเครดิต/เดบิต · PromptPay · ได้ไฟล์ทางอีเมลทันที</p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="shop-footer wrap">
+    <a href="../">← หน้าหลัก / สั่งทำพิเศษ</a>
+    <span>ชำระเงินปลอดภัยผ่าน Stripe</span>
+  </footer>
+
+  <script src="shop.js"></script>
+</body>
+</html>

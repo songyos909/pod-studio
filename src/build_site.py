@@ -85,7 +85,25 @@ def build():
     with open(os.path.join(DOCS_DIR, "data.json"), "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
-    return {"products": len(products), "gas_configured": bool(site.get("gas_url")), "docs": DOCS_DIR}
+    # เขียน config ของร้านดาวน์โหลดดิจิทัล (docs/store/config.js)
+    store_dir = os.path.join(DOCS_DIR, "store")
+    if os.path.isdir(store_dir):
+        store_cfg = {
+            "gas_url": site.get("store_gas_url", ""),
+            "shop_name": site.get("shop_name", "ร้านดาวน์โหลดดิจิทัล"),
+            "currency": (site.get("currency", "thb")).lower(),
+            "intro": site.get("intro", ""),
+        }
+        with open(os.path.join(store_dir, "config.js"), "w", encoding="utf-8") as f:
+            f.write("// สร้างโดย build_site.py — แก้ที่ config.yaml (site.store_gas_url)\n")
+            f.write("window.STORE_CONFIG = " + json.dumps(store_cfg, ensure_ascii=False) + ";\n")
+
+    return {
+        "products": len(products),
+        "gas_configured": bool(site.get("gas_url")),
+        "store_gas_configured": bool(site.get("store_gas_url")),
+        "docs": DOCS_DIR,
+    }
 
 
 if __name__ == "__main__":

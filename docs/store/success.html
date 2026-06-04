@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ขอบคุณสำหรับการสั่งซื้อ</title>
+  <link rel="stylesheet" href="shop.css" />
+  <script src="config.js"></script>
+</head>
+<body>
+  <main class="wrap success-wrap">
+    <div id="box" class="success-box">
+      <div class="spinner"></div>
+      <h1>กำลังยืนยันการชำระเงิน...</h1>
+    </div>
+  </main>
+  <script>
+    var esc = function (s) { return (s || "").replace(/[&<>"]/g, function (c) { return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]; }); };
+    var sid = new URLSearchParams(location.search).get("session_id");
+    var box = document.getElementById("box");
+    var GAS = (window.STORE_CONFIG || {}).gas_url || "";
+
+    function render(html) { box.innerHTML = html; }
+
+    async function load() {
+      if (!sid) { render("<h1>ไม่พบคำสั่งซื้อ</h1><a class='back' href='./'>← กลับร้าน</a>"); return; }
+      if (!GAS) { render("<h1>ร้านยังไม่ได้ตั้งค่า</h1>"); return; }
+      try {
+        var r = await fetch(GAS + "?action=confirm&session_id=" + encodeURIComponent(sid));
+        var o = await r.json();
+        if (!o.ok || !o.paid) {
+          render("<h1>⌛ กำลังรอการชำระเงิน</h1><p>ถ้าจ่ายแล้วยังไม่ขึ้น รอสักครู่แล้วรีเฟรช</p>" +
+            "<button class='buy-btn' onclick='location.reload()'>รีเฟรช</button>");
+          return;
+        }
+        var links = (o.items || []).map(function (it) {
+          return it.link
+            ? '<a class="dl-item" href="' + esc(it.link) + '">⬇️ ' + esc(it.title) + '</a>'
+            : '<div class="dl-item">' + esc(it.title) + '</div>';
+        }).join("");
+        render('<div class="check">✓</div><h1>ขอบคุณสำหรับการสั่งซื้อ!</h1>' +
+          '<p class="hint">เราส่งไฟล์ไปที่อีเมล ' + esc(o.email || "") + ' แล้ว — หรือดาวน์โหลดได้เลยด้านล่าง</p>' +
+          '<div class="dl-list">' + (links || "<p>ไม่มีไฟล์</p>") + '</div>' +
+          '<a class="back" href="./">← กลับไปที่ร้าน</a>');
+      } catch (e) {
+        render("<h1>❌ " + esc(String(e.message)) + "</h1><a class='back' href='./'>← กลับร้าน</a>");
+      }
+    }
+    load();
+  </script>
+</body>
+</html>

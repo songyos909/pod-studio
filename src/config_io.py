@@ -56,6 +56,8 @@ ALLOWED = {
     "site.line_id": str,
     "site.gas_url": str,
     "site.intro": str,
+    "site.store_gas_url": str,
+    "site.pages_base_url": str,
 }
 
 

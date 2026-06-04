@@ -449,6 +449,51 @@ def store_orders_list():
     return {"items": store_orders.list_orders()}
 
 
+@app.get("/api/store/products-tsv")
+def store_products_tsv():
+    """สร้าง TSV พร้อมวางลงชีต Products ของ Store.gs จากดีไซน์/PDF ที่มี.
+
+    คอลัมน์: id, title, description, price, currency, image_url,
+             drive_file_id(ว่าง), gumroad_url(ว่าง), active
+    image_url = pages_base_url + previews/<slug>.jpg (ถ้าตั้ง) ไม่งั้น path สัมพัทธ์
+    """
+    from fastapi.responses import PlainTextResponse
+    cfg = load_config()
+    site = cfg.get("site", {})
+    base = (site.get("pages_base_url") or "").rstrip("/")
+    price = site.get("price", 290)
+    currency = (site.get("currency", "thb")).lower()
+    header = ["id", "title", "description", "price", "currency",
+              "image_url", "drive_file_id", "gumroad_url", "active"]
+    rows = [header]
+
+    def img_url(slug):
+        rel = f"previews/{slug}.jpg"
+        return f"{base}/{rel}" if base else rel
+
+    # ดีไซน์จาก catalog (ไม่ซ้ำ slug)
+    import csv as _csv
+    cat_path = os.path.join(OUTPUT_DIR, "catalog.csv")
+    if os.path.exists(cat_path):
+        seen = set()
+        with open(cat_path, "r", encoding="utf-8-sig", newline="") as f:
+            for r in _csv.DictReader(f):
+                slug = (r.get("slug") or "").strip()
+                if not slug or slug in seen:
+                    continue
+                seen.add(slug)
+                rows.append([slug, r.get("title") or slug, "", price, currency,
+                             img_url(slug), "", "", "true"])
+    # E-book PDF
+    for b in library.list_bundles():
+        name = b["name"].rsplit(".", 1)[0]
+        rows.append([name, b["name"], f"{b.get('pages','')} หน้า PDF", price, currency,
+                     "", "", "", "true"])
+
+    tsv = "\n".join("\t".join(str(c) for c in row) for row in rows)
+    return PlainTextResponse(tsv, media_type="text/tab-separated-values")
+
+
 @app.get("/api/store/sources")
 def store_sources():
     """แหล่งไฟล์ที่เอามาทำสินค้าได้: PDF (E-book) + ดีไซน์ใน catalog."""
