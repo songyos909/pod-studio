@@ -33,8 +33,18 @@ function getCfg_() {
     successUrl: p.getProperty("SUCCESS_URL") || "",   // เช่น https://user.github.io/pod-studio/store/success.html
     cancelUrl: p.getProperty("CANCEL_URL") || "",     // เช่น https://user.github.io/pod-studio/store/
     shopName: p.getProperty("SHOP_NAME") || "Digital Store",
-    emailFiles: p.getProperty("EMAIL_FILES") !== "false" // "false" = ไม่ส่งอีเมล (ลูกค้าโหลดหน้า success อย่างเดียว)
+    emailFiles: p.getProperty("EMAIL_FILES") !== "false", // "false" = ไม่ส่งอีเมล (ลูกค้าโหลดหน้า success อย่างเดียว)
+    sheetId: p.getProperty("SHEET_ID") || ""   // ใส่ถ้าสร้าง Apps Script แบบ standalone
   };
+}
+
+// คืน Spreadsheet: ถ้าตั้ง SHEET_ID ใช้ openById (รองรับ standalone) ไม่งั้นใช้ชีตที่ผูกอยู่
+function ss_() {
+  var id = getCfg_().sheetId;
+  if (id) return SpreadsheetApp.openById(id);
+  var active = SpreadsheetApp.getActiveSpreadsheet();
+  if (!active) throw new Error("ไม่พบ Spreadsheet — ตั้ง Script Property SHEET_ID (ดู STORE_SETUP.md)");
+  return active;
 }
 
 // ====================== ROUTES ======================
@@ -69,7 +79,7 @@ function doPost(e) {
 
 // ====================== PRODUCTS ======================
 function productRows_() {
-  var sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_PRODUCTS);
+  var sh = ss_().getSheetByName(SHEET_PRODUCTS);
   if (!sh) throw new Error("ไม่พบชีต " + SHEET_PRODUCTS);
   var values = sh.getDataRange().getValues();
   var head = values.shift().map(function (h) { return String(h).trim().toLowerCase(); });
@@ -226,7 +236,7 @@ function stripe_(method, path, payload) {
 
 // ====================== UTIL ======================
 function getSheet_(name, header) {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var ss = ss_();
   var sh = ss.getSheetByName(name);
   if (!sh) { sh = ss.insertSheet(name); if (header) sh.appendRow(header); }
   return sh;

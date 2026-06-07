@@ -172,10 +172,10 @@ site:
   intro: "ดีไซน์งานศิลป์สร้างด้วย AI พิมพ์ลงเสื้อ/สติกเกอร์/โปสเตอร์ สั่งได้เลย"
   # ร้านดาวน์โหลดดิจิทัล serverless (ขายอัตโนมัติ 24 ชม. ไม่ต้องเปิดคอม)
   # วางลิงก์ /exec ของ Store.gs (ดู gas/STORE_SETUP.md) แล้วรัน build_site → docs/store/
-  store_gas_url: ""
+  store_gas_url: "https://script.google.com/macros/s/AKfycbzay_fGx0NYWRtGqg7h6bihhycLVhke6k2OdSvR9etUpQ17BeSO9IoDFu7RKigj6bTj/exec"
   # URL ฐานของ GitHub Pages (ใช้สร้าง image_url ในตาราง Products) เช่น
   # https://songyos909.github.io/pod-studio/   (เว้นว่าง = ใช้ path สัมพัทธ์)
-  pages_base_url: ""
+  pages_base_url: "https://songyos909.github.io/pod-studio/"
 
 # ร้านขายไฟล์ดิจิทัลบน PC (Stripe Checkout) — เปิดที่ http://127.0.0.1:8500/store
 # คีย์ Stripe เก็บใน credentials.yaml (stripe.secret_key / publishable_key / webhook_secret)

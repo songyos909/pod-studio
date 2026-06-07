@@ -43,6 +43,10 @@
    | `CANCEL_URL` | `https://songyos909.github.io/pod-studio/store/` |
    | `WEBHOOK_KEY` | ตั้งรหัสลับอะไรก็ได้ เช่น `mysecret123` (ใช้ขั้นที่ 6) |
    | `EMAIL_FILES` | (ไม่บังคับ) ใส่ `false` ถ้า**ไม่อยากส่งอีเมล** — ลูกค้าโหลดบนหน้า success อย่างเดียว |
+   | `SHEET_ID` | **ใส่ถ้าสร้าง Apps Script แบบ standalone** (ไม่ได้สร้างจากในชีต) — เอา id จาก URL ของ Google Sheet: `docs.google.com/spreadsheets/d/`**`SHEET_ID`**`/edit` |
+
+> ถ้าเจอ error `getActiveSpreadsheet ... null` หรือ `Cannot read properties of null` = ต้องตั้ง `SHEET_ID` (เพราะ project ไม่ได้ผูกกับชีต)
+> วิธีเลี่ยง: สร้าง Apps Script จาก **ในชีต (Extensions → Apps Script)** จะผูกอัตโนมัติ ไม่ต้องตั้ง SHEET_ID
 
 > 📌 ลูกค้าได้ไฟล์ "ทันทีบนหน้าจอ" หลังจ่ายเสมอ (ไม่ต้องเช็กอีเมล) — อีเมลเป็นแค่สำเนาสำรอง เผื่อปิดหน้าไปก่อนโหลด
 
