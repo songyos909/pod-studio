@@ -79,8 +79,17 @@ function doPost(e) {
 
 // ====================== PRODUCTS ======================
 function productRows_() {
-  var sh = ss_().getSheetByName(SHEET_PRODUCTS);
-  if (!sh) throw new Error("ไม่พบชีต " + SHEET_PRODUCTS);
+  var ss = ss_();
+  var sh = ss.getSheetByName(SHEET_PRODUCTS);
+  if (!sh) {
+    // หาแบบไม่สนตัวพิมพ์/ช่องว่าง (เช่น "products", "Products ")
+    var all = ss.getSheets();
+    for (var i = 0; i < all.length; i++) {
+      if (all[i].getName().trim().toLowerCase() === "products") { sh = all[i]; break; }
+    }
+    if (!sh && all.length) sh = all[0]; // ไม่เจอ -> ใช้แท็บแรก
+  }
+  if (!sh) throw new Error("ไม่พบชีตใด ๆ ใน Spreadsheet");
   var values = sh.getDataRange().getValues();
   var head = values.shift().map(function (h) { return String(h).trim().toLowerCase(); });
   return values.map(function (row) {
